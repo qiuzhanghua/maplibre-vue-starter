@@ -5,11 +5,11 @@ import mapboxgl, {NavigationControl} from 'maplibre-gl';
 import 'maplibre-gl-opacity/dist/maplibre-gl-opacity.css';
 // import * as deck from 'deck.gl'; // not working
 import {MapboxOverlay} from '@deck.gl/mapbox/typed';
-import {PathLayer, ScatterplotLayer} from '@deck.gl/layers/typed';
-import {randomData, toLngLats, toTracks} from "../lib";
+import {GeoJsonLayer, PathLayer, ScatterplotLayer} from '@deck.gl/layers/typed';
+import {extractPoints, randomData, toLngLats, toTracks} from "../lib";
 import {FeatureCollection} from "@turf/turf";
 
-let tracksCount = 20000;
+let tracksCount = 2000;
 let pointPerTrack = 200;
 let mockTracks: FeatureCollection = null;
 const top = 20.031143432239205;
@@ -29,7 +29,7 @@ onMounted(() => {
     container,
     style: 'https://demotiles.maplibre.org/style.json',
     center: [(left + right) / 2, (top + bottom) / 2],
-    zoom: 10
+    zoom: 14
   });
   map.addControl(new NavigationControl(), 'top-right');
 
@@ -51,7 +51,7 @@ onMounted(() => {
       },
       getLineColor: () => [14, 16, 255],
     });
-  console.log(toTracks(mockTracks)[0]);
+  // console.log(mockTracks);
     const pathLayer = new PathLayer({
       id: 'path-layer',
       data: toTracks(mockTracks),
@@ -64,8 +64,42 @@ onMounted(() => {
       capRounded: true,
       jointRounded: true,
     });
+    // const middle = {
+    //   "type": "Feature",
+    //   "geometry": {
+    //     "type": "Point",
+    //     "coordinates": [(left + right) / 2, (top + bottom) / 2]
+    //   },
+    //   "properties": {
+    //     "name": "Hainan"
+    //   }
+    // }
+
+    const jsonLayer = new GeoJsonLayer({
+      id: 'json-layer',
+      data: extractPoints(mockTracks),
+      // getLineColor: [255, 0, 0],
+      getLineWidth: 1,
+      lineWidthMinPixels: 0.25,
+      lineWidthScale: 1,
+      lineCapRounded: true,
+      lineJointRounded: true,
+      stroked: true,
+      filled: false,
+      pointType: 'circle',
+      pointRadiusScale: 1,
+      pointRadiusMinPixels: 0.25,
+      pointWidthScale: 1,
+      // getText: (f) => f.properties.name,
+      // getIcon: () => ({
+      //   url: '/vite.svg',
+      //   width: 128,
+      //   height: 128,
+      //   anchorY: 128,
+      // }),
+    });
     const overlay = new MapboxOverlay({
-      layers: [scatterLayer, pathLayer],
+      layers: [pathLayer, jsonLayer],
     });
     map.addControl(overlay);
   });

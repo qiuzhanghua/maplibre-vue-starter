@@ -37,3 +37,25 @@ export function toTracks(data: FeatureCollection): Track[] {
     }
     return tracks;
 }
+
+export function extractPoints(data: FeatureCollection): FeatureCollection {
+    let features = [];
+    for (let i = 0; i < data.features.length; i++) {
+        let feature = data.features[i];
+        for (let j = 0; j < feature.geometry.coordinates.length; j++) {
+            let f = {
+                type: "Feature",
+                geometry: {
+                    type: "Point",
+                    coordinates: feature.geometry.coordinates[j]
+                },
+                properties: {}
+            };
+            features.push(f);
+        }
+    }
+    return {
+        type: "FeatureCollection",
+        features: features
+    };
+}
