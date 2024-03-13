@@ -4,13 +4,13 @@ import 'maplibre-gl/dist/maplibre-gl.css';
 import mapboxgl, {NavigationControl, Popup} from 'maplibre-gl';
 import 'maplibre-gl-opacity/dist/maplibre-gl-opacity.css';
 // import * as deck from 'deck.gl'; // not working
-import {MapboxOverlay} from '@deck.gl/mapbox';
-import {ScatterplotLayer} from '@deck.gl/layers';
+import {MapboxOverlay} from '@deck.gl/mapbox/typed';
+import {ScatterplotLayer} from '@deck.gl/layers/typed';
 import {randomData, toLngLats} from "../lib";
 import {FeatureCollection} from "@turf/turf";
 
 let tracksCount = 2000;
-let pointPerTrack = 100;
+let pointPerTrack = 200;
 let mockTracks: FeatureCollection = null;
 const top = 20.031143432239205;
 const left = 109.85781435455979;
@@ -42,9 +42,9 @@ onMounted(() => {
       opacity: 0.7,
       stroked: true,
       filled: false,
-      radiusMinPixels: 10,
-      radiusMaxPixels: 100,
-      lineWidthMinPixels: 5,
+      radiusScale: 3,
+      radiusMinPixels: 0.25,
+      getRadius: 1,
       // Using appropriate fields for coordinates from the dataset
       getPosition: (d) => [d.lng, d.lat],
       getFillColor: (d) => {
