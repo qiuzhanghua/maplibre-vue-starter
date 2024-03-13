@@ -16,6 +16,7 @@
     "@deck.gl/json": "^8.9.35",
     "@deck.gl/layers": "^8.9.35",
     "@deck.gl/mesh-layers": "^8.9.35",
+    "@turf/turf": "^6.5.0",
     "deck.gl": "^8.9.35",
     "maplibre-gl": "^4.1.0",
     "maplibre-gl-opacity": "^1.7.0",
