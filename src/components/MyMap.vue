@@ -1,15 +1,15 @@
 <script setup lang="ts">
 import {onMounted} from 'vue';
 import 'maplibre-gl/dist/maplibre-gl.css';
-import mapboxgl, {NavigationControl, Popup} from 'maplibre-gl';
+import mapboxgl, {NavigationControl} from 'maplibre-gl';
 import 'maplibre-gl-opacity/dist/maplibre-gl-opacity.css';
 // import * as deck from 'deck.gl'; // not working
 import {MapboxOverlay} from '@deck.gl/mapbox/typed';
-import {ScatterplotLayer} from '@deck.gl/layers/typed';
-import {randomData, toLngLats} from "../lib";
+import {PathLayer, ScatterplotLayer} from '@deck.gl/layers/typed';
+import {randomData, toLngLats, toTracks} from "../lib";
 import {FeatureCollection} from "@turf/turf";
 
-let tracksCount = 2000;
+let tracksCount = 20000;
 let pointPerTrack = 200;
 let mockTracks: FeatureCollection = null;
 const top = 20.031143432239205;
@@ -35,33 +35,37 @@ onMounted(() => {
 
   // Add the overlay as a control
   map.on('load', async () => {
-    const layer = new ScatterplotLayer({
+    const scatterLayer = new ScatterplotLayer({
       id: 'scatterplot-layer',
       data: toLngLats(mockTracks),
       pickable: true,
       opacity: 0.7,
       stroked: true,
       filled: false,
-      radiusScale: 3,
+      radiusScale: 1,
       radiusMinPixels: 0.25,
       getRadius: 1,
-      // Using appropriate fields for coordinates from the dataset
       getPosition: (d) => [d.lng, d.lat],
-      getFillColor: (d) => {
+      getFillColor: () => {
         return [14, 16, 255];
       },
-      getLineColor: (d) => [14, 16, 255],
-      onClick: (info) => {
-        const {coordinate} = info;
-        new  Popup()
-            .setLngLat(coordinate)
-            .addTo(map);
-      },
+      getLineColor: () => [14, 16, 255],
     });
-
-    // Create the overlay
+  console.log(toTracks(mockTracks)[0]);
+    const pathLayer = new PathLayer({
+      id: 'path-layer',
+      data: toTracks(mockTracks),
+      pickable: true,
+      widthScale: 1,
+      widthMinPixels: 0.25,
+      getPath: d => d.path,
+      getColor: () => [255, 0, 0],
+      getWidth: 1,
+      capRounded: true,
+      jointRounded: true,
+    });
     const overlay = new MapboxOverlay({
-      layers: [layer],
+      layers: [scatterLayer, pathLayer],
     });
     map.addControl(overlay);
   });

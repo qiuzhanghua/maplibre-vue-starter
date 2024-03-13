@@ -17,3 +17,23 @@ export function toLngLats(data: FeatureCollection): LngLat[] {
     }
     return lnglats;
 }
+
+export type Track = { id: string, path: number[][], direction: number };
+
+export function toTracks(data: FeatureCollection): Track[] {
+    let tracks: Track[] = [];
+    for (let i = 0; i < data.features.length; i++) {
+        let feature = data.features[i];
+        let path: number[][] = [];
+        for (let j = 0; j < feature.geometry.coordinates.length; j++) {
+            let point = [feature.geometry.coordinates[j][0], feature.geometry.coordinates[j][1]];
+            path.push(point);
+        }
+        tracks.push({
+            id: feature.properties.id,
+            path: path,
+            direction: feature.properties.direction
+        });
+    }
+    return tracks;
+}
