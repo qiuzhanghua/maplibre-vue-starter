@@ -6,10 +6,10 @@ import 'maplibre-gl-opacity/dist/maplibre-gl-opacity.css';
 // import * as deck from 'deck.gl'; // not working
 import {MapboxOverlay} from '@deck.gl/mapbox/typed';
 import {GeoJsonLayer, PathLayer, ScatterplotLayer} from '@deck.gl/layers/typed';
-import {extractPoints, randomData, toLngLats, toTracks} from "../lib";
+import {mergePoints, randomData, toLngLats, toTracks} from "../lib";
 import {FeatureCollection} from "@turf/turf";
 
-let tracksCount = 2000;
+let tracksCount = 20000;
 let pointPerTrack = 200;
 let mockTracks: FeatureCollection = null;
 const top = 20.031143432239205;
@@ -22,7 +22,7 @@ onMounted(() => {
   mockTracks = randomData(tracksCount, pointPerTrack, [left, top, right, bottom]);
   let end = new Date().getTime();
   console.log("mock data in " + (end - start) + 'ms');
-
+  // console.log(mergePoints(mockTracks));
   let container = document.getElementById('map')!;
   // see https://github.com/mug-jp/maplibre-gl-opacity for more maps
   let map = new mapboxgl.Map({
@@ -51,7 +51,7 @@ onMounted(() => {
       },
       getLineColor: () => [14, 16, 255],
     });
-  // console.log(mockTracks);
+    // console.log(mockTracks);
     const pathLayer = new PathLayer({
       id: 'path-layer',
       data: toTracks(mockTracks),
@@ -77,7 +77,7 @@ onMounted(() => {
 
     const jsonLayer = new GeoJsonLayer({
       id: 'json-layer',
-      data: extractPoints(mockTracks),
+      data: mergePoints(mockTracks),
       // getLineColor: [255, 0, 0],
       getLineWidth: 1,
       lineWidthMinPixels: 0.25,
@@ -99,7 +99,8 @@ onMounted(() => {
       // }),
     });
     const overlay = new MapboxOverlay({
-      layers: [pathLayer, jsonLayer],
+      layers: [jsonLayer],
+      // layers: [scatterLayer, pathLayer],
     });
     map.addControl(overlay);
   });
@@ -112,20 +113,20 @@ onMounted(() => {
 </template>
 
 <style scoped>
-  body {
-    margin: 0;
-    padding: 0;
-  }
+body {
+  margin: 0;
+  padding: 0;
+}
 
-  #map {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-  }
+#map {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+}
 
-  .maplibregl-popup {
-    z-index: 2;
-  }
+.maplibregl-popup {
+  z-index: 2;
+}
 </style>

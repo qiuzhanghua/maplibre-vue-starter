@@ -1,4 +1,4 @@
-import {FeatureCollection, randomLineString} from "@turf/turf";
+import {explode, FeatureCollection, randomLineString} from "@turf/turf";
 
 export function randomData(count: number, num_vertices: number, bbox: number[]): FeatureCollection {
     return randomLineString(count, {bbox, num_vertices});
@@ -38,24 +38,10 @@ export function toTracks(data: FeatureCollection): Track[] {
     return tracks;
 }
 
-export function extractPoints(data: FeatureCollection): FeatureCollection {
-    let features = [];
+export function mergePoints(data: FeatureCollection): FeatureCollection {
+    let points = explode(data);
     for (let i = 0; i < data.features.length; i++) {
-        let feature = data.features[i];
-        for (let j = 0; j < feature.geometry.coordinates.length; j++) {
-            let f = {
-                type: "Feature",
-                geometry: {
-                    type: "Point",
-                    coordinates: feature.geometry.coordinates[j]
-                },
-                properties: {}
-            };
-            features.push(f);
-        }
+        points.features.push(data.features[i])
     }
-    return {
-        type: "FeatureCollection",
-        features: features
-    };
+    return points;
 }
