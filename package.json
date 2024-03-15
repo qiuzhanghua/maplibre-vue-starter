@@ -6,7 +6,9 @@
   "scripts": {
     "dev": "vite",
     "build": "vue-tsc && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "lint": "prettier --check .",
+    "format": "prettier --write ."
   },
   "dependencies": {
     "@deck.gl/aggregation-layers": "^8.9.35",
@@ -25,6 +27,7 @@
   "devDependencies": {
     "@deck.gl/mapbox": "^8.9.35",
     "@vitejs/plugin-vue": "^5.0.4",
+    "prettier": "^3.2.5",
     "typescript": "^5.2.2",
     "vite": "^5.1.6",
     "vue-tsc": "^2.0.6"

@@ -6,5 +6,4 @@ import MyMap from "./components/MyMap.vue";
   <MyMap />
 </template>
 
-<style scoped>
-</style>
+<style scoped></style>
